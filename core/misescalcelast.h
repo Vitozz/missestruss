@@ -1,0 +1,94 @@
+/*
+ * misescalcelast.h
+ * Copyright (C) 2018 Vitaly Tonkacheyev
+ *
+ * This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#ifndef MISESCALC_ELAST
+#define MISESCACL_ELAST
+
+#include <QObject>
+#include <QVector>
+#include <QPoint>
+#include <QSharedPointer>
+#include <cmath>
+#include "defines.h"
+
+class MisesCalcElast
+{
+public:
+    explicit MisesCalcElast();
+    ~MisesCalcElast() {}
+    typedef QSharedPointer<MisesCalcElast> Ptr;
+
+public:
+    void setStartAnlge(const double &value);
+    void setYoungModule(const double &value) {youngModule_ = value*1e6;}
+    void setTrussLength(const double &value) {trussLength_ = value / 2.0;}
+    void setCsArea(const double &value) {csArea_ = value;}
+    void setSupportStfns(const double &value) {supportStfns_ = value;}
+    void setIterations(const double &value);
+    void setHwM(const double &value) {hwM_ = value;}
+    void setAfcal(const double &value) {Afcal_ = value;}
+    QVector<QPointF> getAllForces() {return curveFx_;}
+    QVector<QPointF> getAllKeM() {return allkeM_;}
+    QVector<QPointF> getExtremums(const double &startAngle, const double &stopAngle);
+    QVector<QString> getAngles();
+    QPointF extremum();
+    double scale() const {return scale_;}
+    void doCalculate();
+
+private:
+    double radians(const double &angle) const { return angle*M_PI/180.0; }
+    double degrees(const double &angle) const { return angle*180.0/M_PI; }
+    double getC2(const double &vRel) const;
+    double getA() const;
+    double getB(const double &vRel) const;
+    double getC(const double &vRel) const;
+    double getD(const double &vRel) const;
+    double getE(const double &vRel) const;
+    double getKeM(const double &vRel) const;
+    double getForce(const double &value) const;
+    double getNewX1Point(const double &a, const double &b) const {return (b - (b-a)/PHI);}
+    double getNewX2Point(const double &a, const double &b) const {return (a + (b-a)/PHI);}
+    double getEpsion(const double &a, const double &b) const {return qAbs(b-a);}
+    QPointF findExtremum(const double &a, const double &b, const double &epsilon);
+    bool fZeroCheck(const double &a) const { return (qAbs(a-ZERO) < EPSILON_);}
+    void calculateExtremums(const double &startAngle, const double &stopAngle);
+    void countScale(const double &angle);
+    void obtainForcesVectors(const double &angle);
+    double pow2(const double &a) const {return a*a;}
+
+private:
+    double iterations_;
+    double startAngle_;
+    double youngModule_;
+    double trussLength_;
+    double csArea_;
+    double forceAngle_;
+    double supportStfns_;
+    double hwM_;
+    double Afcal_;
+    double tgA_;
+    double tgB_;
+    double sinA_;
+    double cosA_;
+    double scale_;
+    QPointF extremum_;
+    QVector<QPointF> curveFx_;
+    QVector<QPointF> allkeM_;
+    QVector<QPointF> extremums_;
+    QVector<QString> angles_;
+};
+#endif // MISESCALC_ELAST

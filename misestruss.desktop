@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=MisesTruss
+Comment=Simple program for learning von Mises Truss
+Comment[ru]=Простая программа для изучения ферм Мизеса
+Exec=/usr/bin/misestruss
+Icon=/usr/share/misestruss/f(x)48.png
+Type=Application
+Categories=Education;Math;
