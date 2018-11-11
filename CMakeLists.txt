@@ -23,6 +23,8 @@ else()
     add_definitions( -DQT_NO_DEBUG )
 endif()
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${PROJECT_NAME}" )
+
 include_directories(
 	${CMAKE_SOURCE_DIR}
 	${CMAKE_CURRENT_BINARY_DIR}
@@ -70,7 +72,6 @@ if( USE_QT5 )
 	find_package( Qt5 COMPONENTS Widgets Svg REQUIRED )
 	find_package( LibQwt5 REQUIRED )
 	include_directories( ${Qt5Gui_INCLUDE_DIRS} )
-	set( CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}" )
 	qt5_add_resources( RSCS ${misestruss_QRC} )
     if( BUILD_TRANSLATIONS )
 		find_package( Qt5LinguistTools REQUIRED )
@@ -107,6 +108,10 @@ add_executable( ${PROJECT_NAME}
         ${TRS}
         ${misestruss_RC}
 )
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+
 target_link_libraries ( ${PROJECT_NAME}
                         ${QT_DEPLIBS}
                         ${QWT_LIBRARY}
