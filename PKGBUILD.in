@@ -39,7 +39,7 @@ build() {
   
   # BUILD HERE
 
-  cmake -DCMAKE_INSTALL_PREFIX=/ \
+  cmake -DCMAKE_INSTALL_PREFIX=/usr \
     -DCMAKE_BUILD_TYPE=Release \
     "$srcdir/$_gitname"
 
