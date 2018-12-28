@@ -9,11 +9,11 @@ license=('GPL3')
 depends=( 'qt5-base' 'qt5-tools' 'qwt' )
 makedepends=('git' 'cmake')
 conflicts=(@CPACK_PACKAGE_NAME@)
-source=(git+https://github.com/Vitozz/kukuruzo)
+source=(git+https://github.com/Vitozz/qmissestruss)
 md5sums=('SKIP') 
 
-_gitroot=https://github.com/Vitozz/kukuruzo
-_gitname=kukuruzo
+_gitroot=https://github.com/Vitozz
+_gitname=qmissestruss
 
 build() {
   cd "$srcdir"
@@ -24,9 +24,11 @@ build() {
     msg "The local files are updated."
   else
     git clone "$_gitroot" "$_gitname"
+  fi
+  msg "Updating submodules..."
+  cd "$srcdir/$_gitname"
     git submodule init
     git submodule update
-  fi
 
   msg "GIT checkout done or server timeout"
   msg "Starting build..."
@@ -39,7 +41,7 @@ build() {
 
   cmake -DCMAKE_INSTALL_PREFIX=/ \
     -DCMAKE_BUILD_TYPE=Release \
-    "$srcdir/$_gitname/qt/@CPACK_PACKAGE_NAME@"
+    "$srcdir/$_gitname"
 
   make
 }
