@@ -8,7 +8,7 @@ QT       += core gui svg
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets svg
 
-TARGET = Mises_truss
+TARGET = qmisestruss
 TEMPLATE = app
 
 PREFIX = /usr
@@ -44,16 +44,16 @@ FORMS    += gui/mainwindow.ui
 RESOURCES += mises1.qrc
 
 LANG_PATH = langs
-TRANSLATIONS = $$LANG_PATH/misestruss_ru.ts \
-		$$LANG_PATH/misestruss_uk.ts
+TRANSLATIONS = $$LANG_PATH/qmisestruss_ru.ts \
+		$$LANG_PATH/qmisestruss_uk.ts
 unix {
 	target.path = $$BINDIR
 	INSTALLS += target
 	df.path = $$DATADIR/applications/
 	df.files = misestruss.desktop
-	translations.path = $$DATADIR/misestruss/langs
-	translations.extra = lrelease Mises1.pro && cp -f $$LANG_PATH/misestruss_*.qm  $(INSTALL_ROOT)$$translations.path
-	icon.path =$$DATADIR/misestruss/icons
+	translations.path = $$DATADIR/qmisestruss/langs
+	translations.extra = lrelease Mises1.pro && cp -f $$LANG_PATH/qmisestruss_*.qm  $(INSTALL_ROOT)$$translations.path
+	icon.path =$$DATADIR/qmisestruss/icons
 	icon.files = icons/f(x)48.png
 	INSTALLS += df \
 		    translations \

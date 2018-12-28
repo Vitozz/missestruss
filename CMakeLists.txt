@@ -1,4 +1,4 @@
-project( misestruss )
+project( qmisestruss )
 cmake_minimum_required( VERSION 3.1.0 )
 set( CMAKE_AUTOMOC ON )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
@@ -10,6 +10,7 @@ set( CMAKE_MODULE_PATH
 
 option( BUILD_TRANSLATIONS "Build project translations" ON )
 option( USE_QT5 "Use Qt5" ON )
+option( USE_CPACK "Use cpack to create packages" OFF )
 
 find_package(Qt5Core QUIET)
 
@@ -24,6 +25,11 @@ else()
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${PROJECT_NAME}" )
+
+include("${PROJECT_SOURCE_DIR}/version.cmake")
+if(USE_CPACK)
+    include("${PROJECT_SOURCE_DIR}/use_cpack.cmake")
+endif()
 
 include_directories(
 	${CMAKE_SOURCE_DIR}

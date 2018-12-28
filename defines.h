@@ -2,7 +2,7 @@
 #define DEFINES
 
 #define ORGANIZATION "thesomeprojects"
-#define APPNAME "misestruss"
+#define APPNAME "qmisestruss"
 #define APPVERISON "0.0.4"
 
 #define NumIter "ITERATIONS"
