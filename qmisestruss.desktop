@@ -3,6 +3,6 @@ Name=MisesTruss
 Comment=Simple program for learning von Mises Truss
 Comment[ru]=Простая программа для изучения ферм Мизеса
 Exec=/usr/bin/qmisestruss
-Icon=/usr/share/qmisestruss/f(x)48.png
+Icon=/usr/share/qmisestruss/icons/f(x)48.png
 Type=Application
 Categories=Education;Math;
