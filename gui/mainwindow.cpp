@@ -1,6 +1,6 @@
 /*
  * mainwindow.cpp
- * Copyright (C) 2015-2018 Vitaly Tonkacheyev
+ * Copyright (C) 2015-2019 Vitaly Tonkacheyev
  *
  * This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -45,16 +45,16 @@
 #include <qwt_legend.h>
 
 MainWindow::MainWindow(QWidget *parent) :
-  QMainWindow(parent),
-  ui(new Ui::MainWindow),
-  misesNE_(MisesCalcNonElast::Ptr(new MisesCalcNonElast())),
-  misesE_(MisesCalcElast::Ptr(new MisesCalcElast())),
-  grid_(new QwtPlotGrid()),
-  buffer_(QString()),
-  lastDir_(QDir::home().absolutePath()),
-  log_(QString()),
-  popupMenu_(new QMenu(this)),
-  copyAction_(new QAction(tr("&Copy Data"), popupMenu_))
+    QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    misesNE_(MisesCalcNonElast::Ptr(new MisesCalcNonElast())),
+    misesE_(MisesCalcElast::Ptr(new MisesCalcElast())),
+    grid_(new QwtPlotGrid()),
+    buffer_(QString()),
+    lastDir_(QDir::home().absolutePath()),
+    log_(QString()),
+    popupMenu_(new QMenu(this)),
+    copyAction_(new QAction(tr("&Copy Data"), popupMenu_))
 {
     ui->setupUi(this);
     QSettings settings(this);
@@ -207,11 +207,11 @@ void MainWindow::onExit()
 void MainWindow::onAbout()
 {
     const QString message(tr("<!DOCTYPE html><html><body>"
-                  "<p><b>Calculation of von Mises truss parameters</b></p>"
-                  "<p>Written using Qt</p>"
-                  "<p>2015-2018 (c) Vitaly Tonkacheyev <address><a href=\"mailto:thetvg@gmail.com\">&lt;EMail&gt;</a></address></p>"
-                  "<a href=\"http://sites.google.com/site/thesomeprojects/\">Program WebSite</a>"
-                  "<p>version: <b>%1</b></p></body></html>").arg(APPVERISON));
+                             "<p><b>Calculation of von Mises truss parameters</b></p>"
+                             "<p>Written using Qt</p>"
+                             "<p>2015-2019 (c) Vitaly Tonkacheyev <address><a href=\"mailto:thetvg@gmail.com\">&lt;EMail&gt;</a></address></p>"
+                             "<a href=\"http://sites.google.com/site/thesomeprojects/\">Program WebSite</a>"
+                             "<p>version: <b>%1</b></p></body></html>").arg(APPVERISON));
     const QString appLogo = ":/icons/f(x)48.png";
     QMessageBox about;
     about.setIconPixmap(QPixmap(appLogo));
@@ -281,11 +281,11 @@ void MainWindow::calculate()
         ui->progressBar->setValue(index+1);
     }
     log_ = tr("Number of items in curve: %1\n").arg(QString::number(curveFx_.count()))
-           +tr("Number of iderivatives: %1\n").arg(QString::number(curvedFx_.count()))
-           +tr("Number of KeM: %1\n").arg(QString::number(kems.count()))
-           +tr("Number of item in elastic calculation: %1\n").arg(QString::number(elastCurve.count()))
-           +tr("GCS Plot Scale: %1\n").arg(QString::number(misesNE_->scale()))
-           +tr("S. Bilyk Plot Scale: %1\n").arg(QString::number(misesE_->scale()));
+            +tr("Number of iderivatives: %1\n").arg(QString::number(curvedFx_.count()))
+            +tr("Number of KeM: %1\n").arg(QString::number(kems.count()))
+            +tr("Number of item in elastic calculation: %1\n").arg(QString::number(elastCurve.count()))
+            +tr("GCS Plot Scale: %1\n").arg(QString::number(misesNE_->scale()))
+            +tr("S. Bilyk Plot Scale: %1\n").arg(QString::number(misesE_->scale()));
 
     ui->cLog->setText(log_);
     ui->tableWidget->setColumnWidth(0, 150);
@@ -452,10 +452,9 @@ void MainWindow::copyToClipboard()
 
 void MainWindow::saveSelection()
 {
-    QStringList lines;
-    lines << QString("%1\t%2\t%3\n").arg("alpha_0")
-                      .arg(ui->extremums->horizontalHeaderItem(1)->text())
-                      .arg(ui->extremums->horizontalHeaderItem(2)->text());
+    QStringList lines({QString("%1\t%2\t%3\n").arg("alpha_0")
+                       .arg(ui->extremums->horizontalHeaderItem(1)->text())
+                       .arg(ui->extremums->horizontalHeaderItem(2)->text())});
     for (int row =0; row < ui->extremums->rowCount(); ++row) {
         QStringList line;
         for (int column = 0; column < ui->extremums->columnCount(); ++column) {
@@ -465,11 +464,11 @@ void MainWindow::saveSelection()
     }
     QString result = lines.join("");
     QString filename = QFileDialog::getSaveFileName(this,
-                            tr("Save file"),
-                            lastDir_,
-                            tr("CSV Table (*.csv)"),
-                            nullptr,
-                            nullptr);
+                                                    tr("Save file"),
+                                                    lastDir_,
+                                                    tr("CSV Table (*.csv)"),
+                                                    nullptr,
+                                                    nullptr);
     if (!filename.isEmpty()) {
         int dotIndex = filename.lastIndexOf(".");
         if (dotIndex < 0) {

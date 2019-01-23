@@ -1,6 +1,6 @@
 /*
  * mainwindow.h
- * Copyright (C) 2015-2018 Vitaly Tonkacheyev
+ * Copyright (C) 2015-2019 Vitaly Tonkacheyev
  *
  * This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,51 +34,51 @@ class MainWindow;
 
 class MainWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-	~MainWindow();
+    ~MainWindow();
 
 protected slots:
-	//DoubleSpinbox slots
-	void startAnlgeChanged(const double &value);
-	void youngModuleChanged(const double &value);
-	void trussLengthChanged(const double &value);
-	void csAreaChnged(const double &value);
-	void forceAngleChanged(const double &value);
-	void supportStfnsChanged(const double &value);
-	void iterationChanged(const double &value);
+    //DoubleSpinbox slots
+    void startAnlgeChanged(const double &value);
+    void youngModuleChanged(const double &value);
+    void trussLengthChanged(const double &value);
+    void csAreaChnged(const double &value);
+    void forceAngleChanged(const double &value);
+    void supportStfnsChanged(const double &value);
+    void iterationChanged(const double &value);
     void hwChanged(const double &value);
     void AfcalChanged(const double &value);
-	//Buttons
-	void onCountBtn();
-	void onCountExtremums();
-	void onSaveBtn();
+    //Buttons
+    void onCountBtn();
+    void onCountExtremums();
+    void onSaveBtn();
     void calculateKv();
     void onPlus();
     void onSubst();
-	//Table1
-	void onTableSelectionChanged();
-	void onPopup(const QPoint& point);
-	void onCopy(bool);
-	//TabWidget
-	void onTabChanged(int index);
-	//Menu
-	void onExit();
-	void onAbout();
+    //Table1
+    void onTableSelectionChanged();
+    void onPopup(const QPoint& point);
+    void onCopy(bool);
+    //TabWidget
+    void onTabChanged(int index);
+    //Menu
+    void onExit();
+    void onAbout();
 
 protected:
-	void closeEvent(QCloseEvent *e);
+    void closeEvent(QCloseEvent *e);
 
 private:
-	void calculate();
-	void calculateExtremums();
-	void checkVars();
-	void keyPressEvent(QKeyEvent * event);
-	void copyToClipboard();
-	void saveSelection();
-	void saveSettings();
+    void calculate();
+    void calculateExtremums();
+    void checkVars();
+    void keyPressEvent(QKeyEvent * event);
+    void copyToClipboard();
+    void saveSelection();
+    void saveSettings();
     void showDoneDialog(const QString &text);
     bool fZeroCheck(const double &a) const { return (qAbs(a-ZERO) < EPSILON_);}
     double TextToDouble(const QString &text) const;
@@ -86,15 +86,15 @@ private:
     void enableButtons(bool enabled);
 
 private:
-	Ui::MainWindow *ui;
+    Ui::MainWindow *ui;
     MisesCalcNonElast::Ptr misesNE_;
     MisesCalcElast::Ptr misesE_;
-	QSharedPointer<QwtPlotGrid> grid_;
-	QString buffer_;
-	QString lastDir_;
+    QSharedPointer<QwtPlotGrid> grid_;
+    QString buffer_;
+    QString lastDir_;
     QString log_;
-	QMenu *popupMenu_;
-	QAction *copyAction_;
+    QMenu *popupMenu_;
+    QAction *copyAction_;
 };
 
 #endif // MAINWINDOW_H

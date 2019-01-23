@@ -1,6 +1,6 @@
 /*
  * misescalcnelast.cpp
- * Copyright (C) 2018 Vitaly Tonkacheyev
+ * Copyright (C) 2018-2019 Vitaly Tonkacheyev
  *
  * This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -48,8 +48,8 @@ MisesCalcNonElast::MisesCalcNonElast():
 double MisesCalcNonElast::getForce(const double &value) const
 {
     const double A = fZeroCheck(csArea_) || fZeroCheck(youngModule_)
-                                  ? ZERO
-                                  : value*trussLength_*supportStfns_/(youngModule_*csArea_);
+            ? ZERO
+            : value*trussLength_*supportStfns_/(youngModule_*csArea_);
     const double var1 = fZeroCheck(tgA_) ? ZERO : 1.0/tgA_ - value;
     const double var12 = pow2(var1);
     const double var4 = 1.0-value*tgB_;
@@ -79,8 +79,8 @@ double MisesCalcNonElast::getDfDx(const double &value) const
     const double dC = (-1.0)/sqrt(var32+var22);
     const double dD = (-1.0)*var2*(-2*tgB_*var3-2*var2)/(2*sqrt(var5));
     const double dE = fZeroCheck(csArea_) || fZeroCheck(youngModule_)
-                                   ? ZERO
-                                   : trussLength_*supportStfns_/(csArea_*youngModule_);
+            ? ZERO
+            : trussLength_*supportStfns_/(csArea_*youngModule_);
     return dA+dB+dC+dD+dE + 2*sinA_;
 }
 

@@ -3,7 +3,7 @@
 
 #define ORGANIZATION "thesomeprojects"
 #define APPNAME "qmisestruss"
-#define APPVERISON "0.0.4"
+#define APPVERISON "0.0.5"
 
 #define NumIter "ITERATIONS"
 #define NumStartAngle "START_ANGLE"

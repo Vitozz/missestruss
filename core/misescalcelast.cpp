@@ -1,6 +1,6 @@
 /*
  * misescalcelast.cpp
- * Copyright (C) 2018 Vitaly Tonkacheyev
+ * Copyright (C) 2018-2019 Vitaly Tonkacheyev
  *
  * This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,25 +26,25 @@
 #endif
 
 MisesCalcElast::MisesCalcElast()
-   :iterations_(ZERO),
-    startAngle_(ZERO),
-    youngModule_(ZERO),
-    trussLength_(ZERO),
-    csArea_(ZERO),
-    forceAngle_(ZERO),
-    supportStfns_(ZERO),
-    hwM_(ZERO),
-    Afcal_(ZERO),
-    tgA_(ZERO),
-    tgB_(ZERO),
-    sinA_(ZERO),
-    cosA_(ZERO),
-    scale_(ZERO),
-    extremum_(QPointF()),
-    curveFx_(QVector<QPointF>()),
-    allkeM_(QVector<QPointF>()),
-    extremums_(QVector<QPointF>()),
-    angles_(QVector<QString>())
+    :iterations_(ZERO),
+      startAngle_(ZERO),
+      youngModule_(ZERO),
+      trussLength_(ZERO),
+      csArea_(ZERO),
+      forceAngle_(ZERO),
+      supportStfns_(ZERO),
+      hwM_(ZERO),
+      Afcal_(ZERO),
+      tgA_(ZERO),
+      tgB_(ZERO),
+      sinA_(ZERO),
+      cosA_(ZERO),
+      scale_(ZERO),
+      extremum_(QPointF()),
+      curveFx_(QVector<QPointF>()),
+      allkeM_(QVector<QPointF>()),
+      extremums_(QVector<QPointF>()),
+      angles_(QVector<QString>())
 {
 }
 
@@ -160,7 +160,7 @@ void MisesCalcElast::obtainForcesVectors(const double &angle)
         ++i;
     }
 #ifdef IS_DEBUG
-   qDebug() << allkeM_;
+    qDebug() << allkeM_;
 #endif
 }
 
