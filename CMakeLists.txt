@@ -1,4 +1,4 @@
-project( qmisestruss )
+project( qmisestruss LANGUAGES CXX )
 cmake_minimum_required( VERSION 3.1.0 )
 set( CMAKE_AUTOMOC ON )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
@@ -9,14 +9,7 @@ set( CMAKE_MODULE_PATH
 )
 
 option( BUILD_TRANSLATIONS "Build project translations" ON )
-option( USE_QT5 "Use Qt5" ON )
 option( USE_CPACK "Use cpack to create packages" OFF )
-
-find_package(Qt5Core QUIET)
-
-if(NOT Qt5Core_FOUND AND(USE_QT5))
-    set( USE_QT5 OFF )
-endif()
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" OR ( "${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebugInfo"))
     add_definitions(-DIS_DEBUG)
@@ -74,35 +67,20 @@ IF( WIN32 )
 	set( QWT_ROOT "C:\\build\\qwt-6.1.2\\i386" CACHE STRING "Path to libgcrypt library" )
 ENDIF()
 
-if( USE_QT5 )
-	find_package( Qt5 COMPONENTS Widgets Svg REQUIRED )
-	find_package( LibQwt5 REQUIRED )
-	include_directories( ${Qt5Gui_INCLUDE_DIRS} )
-	qt5_add_resources( RSCS ${misestruss_QRC} )
-    if( BUILD_TRANSLATIONS )
-		find_package( Qt5LinguistTools REQUIRED )
-		qt5_add_translation( TRS ${misestruss_TRS} )
-	endif()
-	qt5_wrap_ui( UIS ${misestruss_UI} )
-	set( QT_DEPLIBS
-		Qt5::Widgets
-		Qt5::Svg
-	)
-else()
-	find_package( Qt4 COMPONENTS QtGui QtCore QtSvg REQUIRED )
-	find_package( LibQwt4 REQUIRED )
-	include( ${QT_USE_FILE} )
-	QT4_WRAP_UI( UIS ${misestruss_UI} )
-	QT4_ADD_RESOURCES( RSCS ${misestruss_QRC} )
-	if( ${BUILD_TRANSLATIONS} )
-		QT4_ADD_TRANSLATION( TRS ${misestruss_TRS} )
-	endif()
-	set( QT_DEPLIBS
-		Qt4::QtCore
-		Qt4::QtGui
-		Qt4::QtSvg
-	)
+find_package( Qt5 COMPONENTS Widgets Svg REQUIRED )
+find_package( LibQwt5 REQUIRED )
+include_directories( ${Qt5Gui_INCLUDE_DIRS} )
+qt5_add_resources( RSCS ${misestruss_QRC} )
+if( BUILD_TRANSLATIONS )
+	find_package( Qt5LinguistTools REQUIRED )
+	qt5_add_translation( TRS ${misestruss_TRS} )
 endif()
+qt5_wrap_ui( UIS ${misestruss_UI} )
+set( QT_DEPLIBS
+	Qt5::Widgets
+	Qt5::Svg
+)
+
 add_definitions( ${QWT_DEFINITIONS} )
 include_directories( ${QWT_INCLUDE_DIR} )
 

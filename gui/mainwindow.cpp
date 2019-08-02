@@ -412,7 +412,7 @@ void MainWindow::onTableSelectionChanged()
     QTableWidget *widget = qobject_cast<QTableWidget*>(sender());
     QModelIndexList list = widget->selectionModel()->selectedIndexes();
     buffer_.clear();
-    qSort(list);
+    std::sort(list.begin(), list.end());
     QString text;
     int currRow = 0;
     foreach(const QModelIndex& cell, list)
