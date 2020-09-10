@@ -80,7 +80,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->forceAngle, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::forceAngleChanged);
     connect(ui->kv, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::supportStfnsChanged);
     connect(ui->YoungModule, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::youngModuleChanged);
-    connect(ui->iterations, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::iterationChanged);
+    connect(ui->iterations,
+            QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this,
+            &MainWindow::iterationChanged);
+    connect(ui->plotScale,
+            QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this,
+            [this](auto value) { misesNE_->setScale(value); });
+    connect(ui->plotScale2,
+            QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this,
+            [this](auto value) { misesE_->setScale(value); });
     //connecting QPushButtons
     connect(ui->countBtn, &QPushButton::pressed, this, &MainWindow::onCountBtn);
     connect(ui->calcExtr, &QPushButton::pressed, this, &MainWindow::onCountExtremums);
@@ -105,7 +116,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->qwtPlot->setAxisTitle(QwtPlot::yLeft, tr("Relative force, P[rel]"));
     ui->qwtPlot->setAxisTitle(QwtPlot::xBottom, tr("Relative vertical displacement, v[rel]"));
     grid_->attach(ui->qwtPlot);
-    QwtLegend *legend(new QwtLegend(ui->qwtPlot));
+    auto legend(new QwtLegend(ui->qwtPlot));
     ui->qwtPlot->insertLegend(legend, QwtPlot::TopLegend, 0.33);
     ui->saveBtn->setEnabled(false);
     ui->calcKvBtn->setEnabled(false);
@@ -157,20 +168,12 @@ void MainWindow::youngModuleChanged(const double &value)
 
 void MainWindow::iterationChanged(const double &value)
 {
-    misesNE_->setIterations(value);
     misesE_->setIterations(value);
+    misesNE_->setIterations(value);
+    misesNE_->countScale(ui->alpha_0->value());
+    misesE_->countScale(ui->alpha_0->value());
     ui->plotScale->setValue(misesNE_->scale());
     ui->plotScale2->setValue(misesE_->scale());
-}
-
-void MainWindow::hwChanged(const double &value)
-{
-    misesE_->setHwM(value);
-}
-
-void MainWindow::AfcalChanged(const double &value)
-{
-    misesE_->setAfcal(value);
 }
 
 void MainWindow::onTabChanged(int index)
@@ -230,6 +233,7 @@ void MainWindow::checkVars()
     misesNE_->setForceAngle(ui->forceAngle->value());
     misesNE_->setSupportStfns(ui->kv->value());
     misesNE_->setIterations(ui->iterations->value());
+    misesNE_->setScale(ui->plotScale->value());
     misesE_->setStartAnlge(ui->alpha_0->value());
     misesE_->setYoungModule(ui->YoungModule->value());
     misesE_->setTrussLength(ui->arcLength->value());
@@ -237,6 +241,7 @@ void MainWindow::checkVars()
     misesE_->setHwM(ui->hw->value());
     misesE_->setAfcal(ui->afcal->value());
     misesE_->setIterations(ui->iterations->value());
+    misesE_->setScale(ui->plotScale2->value());
 }
 
 void MainWindow::calculate()
@@ -263,19 +268,19 @@ void MainWindow::calculate()
     ui->progressBar->setRange(0, curveFx_.count());
     foreach (const QPointF& point, curveFx_) {
         int index = curveFx_.indexOf(point);
-        QTableWidgetItem *item1 = new QTableWidgetItem(DoubleToText(point.x(), 12));
-        QTableWidgetItem *item2 = new QTableWidgetItem(DoubleToText(point.y(), 12));
+        auto item1 = new QTableWidgetItem(DoubleToText(point.x(), 12));
+        auto item2 = new QTableWidgetItem(DoubleToText(point.y(), 12));
         ui->tableWidget->setItem(index, 0, item1);
         ui->tableWidget->setItem(index, 1, item2);
-        QTableWidgetItem *item3 = new QTableWidgetItem(DoubleToText(curvedFx_.at(index).y(), 12));
+        auto item3 = new QTableWidgetItem(DoubleToText(curvedFx_.at(index).y(), 12));
         ui->tableWidget->setItem(index, 2, item3);
         if(index < elastCurve.count()) {
             const QPointF elastPoint = elastCurve.at(index);
-            QTableWidgetItem *item4 = new QTableWidgetItem(DoubleToText(elastPoint.x(), 12));
-            QTableWidgetItem *item5 = new QTableWidgetItem(DoubleToText(elastPoint.y(), 12));
+            auto item4 = new QTableWidgetItem(DoubleToText(elastPoint.x(), 12));
+            auto item5 = new QTableWidgetItem(DoubleToText(elastPoint.y(), 12));
             ui->results_Bilyk->setItem(index, 0, item4);
             ui->results_Bilyk->setItem(index, 1, item5);
-            QTableWidgetItem *item6 = new QTableWidgetItem(DoubleToText(kems.at(index).y(), 12));
+            auto item6 = new QTableWidgetItem(DoubleToText(kems.at(index).y(), 12));
             ui->results_Bilyk->setItem(index, 2, item6);
         }
         ui->progressBar->setValue(index+1);
@@ -294,14 +299,14 @@ void MainWindow::calculate()
     ui->results_Bilyk->setColumnWidth(1, 150);
     ui->results_Bilyk->setColumnWidth(2, 150);
     //
-    QwtPlotCurve *curve(new QwtPlotCurve(tr("Function GCS, P[rel]")));
-    QwtPointSeriesData *myData(new QwtPointSeriesData);
+    auto curve(new QwtPlotCurve(tr("Function GCS, P[rel]")));
+    auto myData(new QwtPointSeriesData);
     myData->setSamples(curveFx_);
     curve->setData(myData);
     curve->attach(ui->qwtPlot);
     if(ui->isDeriv->checkState() == Qt::Checked) {
-        QwtPlotCurve *curve2(new QwtPlotCurve(tr("Derivative of function, P'[rel]")));
-        QwtPointSeriesData *myData2(new QwtPointSeriesData);
+        auto curve2(new QwtPlotCurve(tr("Derivative of function, P'[rel]")));
+        auto myData2(new QwtPointSeriesData);
         myData2->setSamples(curvedFx_);
         curve2->setData(myData2);
         curve2->setPen(QPen(QColor(Qt::red)));
@@ -309,8 +314,8 @@ void MainWindow::calculate()
     }
     ui->qwtPlot->replot();
     //
-    QwtPlotCurve *curve3(new QwtPlotCurve(tr("Function S. Bilyk, P[rel]")));
-    QwtPointSeriesData *myData3(new QwtPointSeriesData);
+    auto curve3(new QwtPlotCurve(tr("Function S. Bilyk, P[rel]")));
+    auto myData3(new QwtPointSeriesData);
     myData3->setSamples(elastCurve);
     curve3->setData(myData3);
     curve3->setPen(QPen(QColor(Qt::blue)));
@@ -352,10 +357,10 @@ void MainWindow::calculateExtremums()
     const QVector<QPointF> extremums = misesNE_->getExtremums(initialAngle, finalAngle);
     const QVector<QString> angles = misesNE_->getAngles();
     foreach (const QPointF &point, extremums) {
-        const QString angle = angles.at(index);
-        QTableWidgetItem *item1 = new QTableWidgetItem(angle);
-        QTableWidgetItem *item2 = new QTableWidgetItem(DoubleToText(point.x(), 12));
-        QTableWidgetItem *item3 = new QTableWidgetItem(DoubleToText(point.y(), 12));
+        const QString& angle = angles.at(index);
+        auto item1 = new QTableWidgetItem(angle);
+        auto item2 = new QTableWidgetItem(DoubleToText(point.x(), 12));
+        auto item3 = new QTableWidgetItem(DoubleToText(point.y(), 12));
         ui->extremums->setItem(index, 0, item1);
         ui->extremums->setItem(index, 1, item2);
         ui->extremums->setItem(index, 2, item3);
@@ -409,7 +414,7 @@ void MainWindow::calculateKv()
 
 void MainWindow::onTableSelectionChanged()
 {
-    QTableWidget *widget = qobject_cast<QTableWidget*>(sender());
+    auto *widget = qobject_cast<QTableWidget*>(sender());
     QModelIndexList list = widget->selectionModel()->selectedIndexes();
     buffer_.clear();
     std::sort(list.begin(), list.end());
@@ -444,7 +449,7 @@ void MainWindow::onCopy(bool)
 void MainWindow::copyToClipboard()
 {
     if (!buffer_.isEmpty()) {
-        QMimeData * mimeData = new QMimeData();
+        auto mimeData = new QMimeData();
         mimeData->setData("text/plain",buffer_.toLocal8Bit());
         QApplication::clipboard()->setMimeData(mimeData);
     }
@@ -489,7 +494,7 @@ void MainWindow::saveSelection()
 
 void MainWindow::onPopup(const QPoint &point)
 {
-    QTableWidget *widget = qobject_cast<QTableWidget*>(sender());
+    auto *widget = qobject_cast<QTableWidget*>(sender());
     QPoint popup = widget->mapToGlobal(point);
     popupMenu_->exec(popup);
 }

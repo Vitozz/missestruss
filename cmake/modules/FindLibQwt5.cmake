@@ -15,7 +15,7 @@ find_path(
 
 find_library(
 	QWT_LIBRARY
-	NAMES qwt qwtd qwt6 qwt6-qt5
+	NAMES qwt qwtd qwt6 qwt6-qt5 qwt-qt5
 	HINTS
 	${QWT_ROOT}/lib
 	${QWT_ROOT}/bin

@@ -38,6 +38,8 @@ public:
     void setForceAngle(const double &value);
     void setSupportStfns(const double &value);
     void setIterations(const double &value);
+    void setScale(const double &value) { scale_ = value; }
+    void countScale(const double &angle);
     QVector<QPointF> getAllForces();
     QVector<QPointF> getAllDerivatives();
     QVector<QPointF> getExtremums(const double &startAngle, const double &stopAngle);
@@ -57,8 +59,7 @@ private:
     QPointF findExtremum(const double& a, const double &b, const double &epsilon);
     bool fZeroCheck(const double &a) const { return (qAbs(a-ZERO) < EPSILON_);}
     void calculateExtremums(const double &startAngle, const double &stopAngle);
-    void countScale(const double &angle);
-    void obtainForcesVectors(const double &angle);
+    void obtainForcesVectors();
     double pow2(const double &a) const {return a*a;}
 
 private:

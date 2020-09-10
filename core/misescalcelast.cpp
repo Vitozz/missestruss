@@ -26,25 +26,10 @@
 #endif
 
 MisesCalcElast::MisesCalcElast()
-    :iterations_(ZERO),
-      startAngle_(ZERO),
-      youngModule_(ZERO),
-      trussLength_(ZERO),
-      csArea_(ZERO),
-      forceAngle_(ZERO),
-      supportStfns_(ZERO),
-      hwM_(ZERO),
-      Afcal_(ZERO),
-      tgA_(ZERO),
-      tgB_(ZERO),
-      sinA_(ZERO),
-      cosA_(ZERO),
-      scale_(ZERO),
-      extremum_(QPointF()),
-      curveFx_(QVector<QPointF>()),
-      allkeM_(QVector<QPointF>()),
-      extremums_(QVector<QPointF>()),
-      angles_(QVector<QString>())
+    : iterations_(ZERO), startAngle_(ZERO), youngModule_(ZERO), trussLength_(ZERO), csArea_(ZERO),
+      forceAngle_(ZERO), supportStfns_(ZERO), hwM_(ZERO), Afcal_(ZERO), tgA_(ZERO), tgB_(ZERO),
+      sinA_(ZERO), cosA_(ZERO), scale_(ZERO), extremum_(QPointF()), curveFx_(QVector<QPointF>()),
+      allkeM_(QVector<QPointF>()), extremums_(QVector<QPointF>()), angles_(QVector<QString>())
 {
 }
 
@@ -77,7 +62,7 @@ double MisesCalcElast::getD(const double &vRel) const
 {
     const double C2 = getC2(vRel);
     const double znam3 = sqrt(pow2(tgA_)+pow2(C2));
-    return fZeroCheck(znam3) ? ZERO : 2.0*C2/znam3;
+    return fZeroCheck(znam3) ? ZERO : 2.0 * qAbs(C2) / znam3; //ABS is a right value
 }
 
 double MisesCalcElast::getE(const double &vRel) const
@@ -97,9 +82,8 @@ double MisesCalcElast::getForce(const double &value) const
     const double D = getD(value);
     const double E = getE(value);
     double keM = getKeM(value);
-    double result = ZERO;
     keM = (keM > ZERO) ? keM : ZERO;
-    result = keM*C+D+E;
+    double result = keM*C+D+E;
 #ifdef IS_DEBUG
     qDebug() << "keM=" << keM;
     qDebug() << "C=" << C;
@@ -112,10 +96,10 @@ double MisesCalcElast::getForce(const double &value) const
 
 void MisesCalcElast::countScale(const double &angle)
 {
-    const double prAngle = degrees(angle) - 45.0 + 1.0;
+    const double prAngle = qAbs(angle - 45.0) + 1.0;
     const double P1_ = 0.0003851;
     const double P2_ = 0.06068;
-    const double result = (P1_*pow2(prAngle)-P2_*prAngle+2.037);
+    const double result = (P1_ * pow2(prAngle) - P2_ * prAngle + 2.037);
     scale_ = fZeroCheck(iterations_) ? result : result / iterations_;
 }
 
@@ -142,14 +126,13 @@ QPointF MisesCalcElast::findExtremum(const double &a, const double &b, const dou
     }
     const double resultX = (bi+ai)/2;
     const double resultY = getForce(resultX);
-    return QPointF(resultX, resultY);
+    return {resultX, resultY};
 }
 
-void MisesCalcElast::obtainForcesVectors(const double &angle)
+void MisesCalcElast::obtainForcesVectors()
 {
     curveFx_.clear();
     allkeM_.clear();
-    countScale(angle);
     double i = ZERO;
     while(i <= iterations_) {
         const double x = i*scale_;
@@ -183,62 +166,20 @@ QPointF MisesCalcElast::extremum()
     return extremum_;
 }
 
-QVector<QPointF> MisesCalcElast::getExtremums(const double &startAngle, const double &stopAngle)
-{
-    calculateExtremums(startAngle, stopAngle);
-    return extremums_;
-}
-
-QVector<QString> MisesCalcElast::getAngles()
-{
-    return angles_;
-}
-
-void MisesCalcElast::calculateExtremums(const double &startAngle, const double &stopAngle)
-{
-    extremums_.clear();
-    angles_.clear();
-    const QVector<QPointF> oldForces = curveFx_;
-    const QVector<QPointF> oldKems = allkeM_;
-    const QPointF oldExtremum = extremum_;
-    const double oldIters = iterations_;
-    double initialAngle = startAngle;
-    initialAngle = (initialAngle > forceAngle_) ? initialAngle : forceAngle_ + 1;
-    const double finalAngle = stopAngle;
-    iterations_ = 100.0;
-    while(initialAngle <= finalAngle) {
-        double radangle = radians(initialAngle);
-        countScale(radangle);
-        tgA_ = tan(radangle);
-        sinA_ = sin(radangle);
-        cosA_ = cos(radangle);
-        obtainForcesVectors(radangle);
-        angles_ << QLocale::system().toString(initialAngle, 'g', 9);
-        extremums_ << extremum();
-        ++initialAngle;
-    }
-    curveFx_ = oldForces;
-    allkeM_ = oldKems;
-    extremum_ = oldExtremum;
-    iterations_ = oldIters;
-}
-
 void MisesCalcElast::setStartAnlge(const double &value)
 {
     startAngle_ = radians(value);
     tgA_ = tan(startAngle_);
     sinA_ = sin(startAngle_);
     cosA_ = cos(startAngle_);
-    countScale(startAngle_);
 }
 
 void MisesCalcElast::setIterations(const double &value)
 {
     iterations_ = value;
-    countScale(startAngle_);
 }
 
 void MisesCalcElast::doCalculate()
 {
-    obtainForcesVectors(startAngle_);
+    obtainForcesVectors();
 }

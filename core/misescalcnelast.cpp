@@ -25,23 +25,11 @@
 #include <QDebug>
 #endif
 
-MisesCalcNonElast::MisesCalcNonElast():
-    iterations_(ZERO),
-    startAngle_(ZERO),
-    youngModule_(ZERO),
-    trussLength_(ZERO),
-    csArea_(ZERO),
-    forceAngle_(ZERO),
-    supportStfns_(ZERO),
-    tgA_(ZERO),
-    tgB_(ZERO),
-    sinA_(ZERO),
-    scale_(ZERO),
-    extremum_(QPointF()),
-    curveFx_(QVector<QPointF>()),
-    curvedFx_(QVector<QPointF>()),
-    extremums_(QVector<QPointF>()),
-    angles_(QVector<QString>())
+MisesCalcNonElast::MisesCalcNonElast()
+    : iterations_(ZERO), startAngle_(ZERO), youngModule_(ZERO), trussLength_(ZERO), csArea_(ZERO),
+      forceAngle_(ZERO), supportStfns_(ZERO), tgA_(ZERO), tgB_(ZERO), sinA_(ZERO), scale_(ZERO),
+      extremum_(QPointF()), curveFx_(QVector<QPointF>()), curvedFx_(QVector<QPointF>()),
+      extremums_(QVector<QPointF>()), angles_(QVector<QString>())
 {
 }
 
@@ -86,8 +74,8 @@ double MisesCalcNonElast::getDfDx(const double &value) const
 
 void MisesCalcNonElast::countScale(const double &angle)
 {
-    const double prAngle = degrees(angle) - 45.0 + 1;
-    const double val = 3.851e-4*pow2(prAngle)-6.068e-2*prAngle+2.037;
+    const double prAngle = qAbs(angle - 45.0) + 1;
+    const double val = 3.851e-4 * pow2(prAngle) - 6.068e-2 * prAngle + 2.037;
     scale_ = fZeroCheck(iterations_) ? val : val / iterations_;
 }
 
@@ -129,14 +117,13 @@ QPointF MisesCalcNonElast::findExtremum(const double &a, const double &b, const 
 #endif
     const double resultX = (bi+ai)/2;
     const double resultY = getForce(resultX);
-    return QPointF(resultX, resultY);
+    return {resultX, resultY};
 }
 
-void MisesCalcNonElast::obtainForcesVectors(const double &angle)
+void MisesCalcNonElast::obtainForcesVectors()
 {
     curveFx_.clear();
     curvedFx_.clear();
-    countScale(angle);
     double i = ZERO;
     while(i <= iterations_) {
         const double x = i*scale_;
@@ -210,7 +197,7 @@ void MisesCalcNonElast::calculateExtremums(const double &startAngle, const doubl
         countScale(radangle);
         tgA_ = tan(radangle);
         sinA_ = sin(radangle);
-        obtainForcesVectors(radangle);
+        obtainForcesVectors();
         angles_ << QLocale::system().toString(initialAngle, 'g', 9);
         extremums_ << extremum();
         ++initialAngle;
@@ -226,7 +213,6 @@ void MisesCalcNonElast::setStartAnlge(const double &value)
     startAngle_ = radians(value);
     tgA_ = tan(startAngle_);
     sinA_ = sin(startAngle_);
-    countScale(startAngle_);
 }
 
 void MisesCalcNonElast::setCsArea(const double &value)
@@ -256,10 +242,9 @@ void MisesCalcNonElast::setSupportStfns(const double &value)
 void MisesCalcNonElast::setIterations(const double &value)
 {
     iterations_ = value;
-    countScale(startAngle_);
 }
 
 void MisesCalcNonElast::doCalculate()
 {
-    obtainForcesVectors(startAngle_);
+    obtainForcesVectors();
 }

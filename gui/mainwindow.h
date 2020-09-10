@@ -38,7 +38,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    ~MainWindow() override;
 
 protected slots:
     //DoubleSpinbox slots
@@ -49,8 +49,6 @@ protected slots:
     void forceAngleChanged(const double &value);
     void supportStfnsChanged(const double &value);
     void iterationChanged(const double &value);
-    void hwChanged(const double &value);
-    void AfcalChanged(const double &value);
     //Buttons
     void onCountBtn();
     void onCountExtremums();
@@ -65,17 +63,17 @@ protected slots:
     //TabWidget
     void onTabChanged(int index);
     //Menu
-    void onExit();
+    static void onExit();
     void onAbout();
 
 protected:
-    void closeEvent(QCloseEvent *e);
+    void closeEvent(QCloseEvent *e) override;
 
 private:
     void calculate();
     void calculateExtremums();
     void checkVars();
-    void keyPressEvent(QKeyEvent * event);
+    void keyPressEvent(QKeyEvent * event) override;
     void copyToClipboard();
     void saveSelection();
     void saveSettings();

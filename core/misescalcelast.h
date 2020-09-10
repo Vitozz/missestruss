@@ -29,7 +29,7 @@ class MisesCalcElast
 {
 public:
     explicit MisesCalcElast();
-    ~MisesCalcElast() {}
+    ~MisesCalcElast() = default;
     typedef QSharedPointer<MisesCalcElast> Ptr;
 
 public:
@@ -37,14 +37,13 @@ public:
     void setYoungModule(const double &value) {youngModule_ = value*1e6;}
     void setTrussLength(const double &value) {trussLength_ = value / 2.0;}
     void setCsArea(const double &value) {csArea_ = value;}
-    void setSupportStfns(const double &value) {supportStfns_ = value;}
     void setIterations(const double &value);
     void setHwM(const double &value) {hwM_ = value;}
     void setAfcal(const double &value) {Afcal_ = value;}
+    void setScale(const double &value) { scale_ = value; }
+    void countScale(const double &angle);
     QVector<QPointF> getAllForces() {return curveFx_;}
     QVector<QPointF> getAllKeM() {return allkeM_;}
-    QVector<QPointF> getExtremums(const double &startAngle, const double &stopAngle);
-    QVector<QString> getAngles();
     QPointF extremum();
     double scale() const {return scale_;}
     void doCalculate();
@@ -64,11 +63,9 @@ private:
     double getNewX2Point(const double &a, const double &b) const {return (a + (b-a)/PHI);}
     double getEpsion(const double &a, const double &b) const {return qAbs(b-a);}
     QPointF findExtremum(const double &a, const double &b, const double &epsilon);
-    bool fZeroCheck(const double &a) const { return (qAbs(a-ZERO) < EPSILON_);}
-    void calculateExtremums(const double &startAngle, const double &stopAngle);
-    void countScale(const double &angle);
-    void obtainForcesVectors(const double &angle);
-    double pow2(const double &a) const {return a*a;}
+    bool fZeroCheck(const double &a) const { return (qAbs(a - ZERO) < EPSILON_); }
+    void obtainForcesVectors();
+    double pow2(const double &a) const { return a * a; }
 
 private:
     double iterations_;
