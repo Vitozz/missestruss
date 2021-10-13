@@ -1,6 +1,6 @@
 /*
  * misescalcnelast.cpp
- * Copyright (C) 2018-2019 Vitaly Tonkacheyev
+ * Copyright (C) 2018-2021 Vitaly Tonkacheyev
  *
  * This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "misescalcnelast.h"
-#include "defines.h"
 #include <cmath>
 #include <QPointF>
 #include <QVector>
@@ -76,7 +75,8 @@ void MisesCalcNonElast::countScale(const double &angle)
 {
     const double prAngle = qAbs(angle - 45.0) + 1;
     const double val = 3.851e-4 * pow2(prAngle) - 6.068e-2 * prAngle + 2.037;
-    scale_ = fZeroCheck(iterations_) ? val : val / iterations_;
+    const double scale1 = !fZeroCheck(iterations_) ? 3 / iterations_ : ZERO;
+    scale_ = fZeroCheck(iterations_) ? qMax(scale1, val) : qMax(scale1, val / iterations_);
 }
 
 QPointF MisesCalcNonElast::findExtremum(const double &a, const double &b, const double &epsilon)
@@ -126,7 +126,7 @@ void MisesCalcNonElast::obtainForcesVectors()
     curvedFx_.clear();
     double i = ZERO;
     while(i <= iterations_) {
-        const double x = i*scale_;
+        const double x = i * scale_;
         const double y = getForce(x);
         curveFx_ << QPointF(x, y);
         const double dy = getDfDx(x);
@@ -153,7 +153,7 @@ QVector<QPointF> MisesCalcNonElast::getAllDerivatives()
 QPointF MisesCalcNonElast::extremum()
 {
     double stopPoint = ZERO;
-    foreach (const QPointF& point, curvedFx_) {
+    for (auto& point : curvedFx_) {
         int index = curvedFx_.indexOf(point) + 1;
         if (index < curvedFx_.count()) {
             const QPointF next = curvedFx_.at(index);

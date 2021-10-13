@@ -1,6 +1,6 @@
 /*
  * misescalcelast.cpp
- * Copyright (C) 2018-2019 Vitaly Tonkacheyev
+ * Copyright (C) 2018-2021 Vitaly Tonkacheyev
  *
  * This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "misescalcelast.h"
-//#include "defines.h"
 #include <cmath>
 #include <QPointF>
 #include <QVector>
@@ -99,8 +98,9 @@ void MisesCalcElast::countScale(const double &angle)
     const double prAngle = qAbs(angle - 45.0) + 1.0;
     const double P1_ = 0.0003851;
     const double P2_ = 0.06068;
-    const double result = (P1_ * pow2(prAngle) - P2_ * prAngle + 2.037);
-    scale_ = fZeroCheck(iterations_) ? result : result / iterations_;
+    const double scale1 = !fZeroCheck(iterations_) ? 3 / iterations_ : ZERO;
+    const double result = P1_ * pow2(prAngle) - P2_ * prAngle + 2.037;
+    scale_ = fZeroCheck(iterations_) ? qMax(scale1, result) : qMax(scale1, result / iterations_);
 }
 
 QPointF MisesCalcElast::findExtremum(const double &a, const double &b, const double &epsilon)
@@ -135,7 +135,7 @@ void MisesCalcElast::obtainForcesVectors()
     allkeM_.clear();
     double i = ZERO;
     while(i <= iterations_) {
-        const double x = i*scale_;
+        const double x = i * scale_;
         const double y = getForce(x);
         const double k = getKeM(x);
         allkeM_ << QPointF(x, k);
@@ -150,12 +150,12 @@ void MisesCalcElast::obtainForcesVectors()
 QPointF MisesCalcElast::extremum()
 {
     double stopPoint = ZERO;
-    foreach (const QPointF& point, allkeM_) {
+    for (auto& point : allkeM_) {
         int index = allkeM_.indexOf(point) + 1;
         if (index < allkeM_.count()) {
             const QPointF next = allkeM_.at(index);
             if (point.y() >= ZERO && next.y() < ZERO) {
-                stopPoint = (index < curveFx_.count()) ? curveFx_.at(index-1).x() : ZERO;
+                stopPoint = (index < curveFx_.count()) ? curveFx_.at(index - 1).x() : ZERO;
                 break;
             }
         }

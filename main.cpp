@@ -1,6 +1,6 @@
 /*
  * main.cpp
- * Copyright (C) 2015-2019 Vitaly Tonkacheyev
+ * Copyright (C) 2015-2021 Vitaly Tonkacheyev
  *
  * This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
                                   QString("/usr/local/share/%1/langs").arg(QString(APPNAME)),
                                   QString("%1/.local/share/%2/langs").arg(QDir::home().absolutePath(),QString(APPNAME))});
     const QString langFile(APPNAME);
-    foreach(const QString &dir, localeDirs){
+    for (auto& dir : localeDirs) {
         if (translator.load(QLocale::system(),langFile, "_", dir )) {
             qApp->installTranslator(&translator);
             break;

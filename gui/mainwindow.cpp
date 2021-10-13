@@ -1,6 +1,6 @@
 /*
  * mainwindow.cpp
- * Copyright (C) 2015-2019 Vitaly Tonkacheyev
+ * Copyright (C) 2015-2021 Vitaly Tonkacheyev
  *
  * This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
 #include <QSettings>
 #include <QDoubleSpinBox>
 #include <QRegExp>
+#include <QTextStream>
 #ifdef IS_DEBUG
 #include <QDebug>
 #endif
@@ -266,7 +267,7 @@ void MainWindow::calculate()
     ui->tableWidget->setRowCount(curveFx_.count());
     ui->results_Bilyk->setRowCount(elastCurve.count());
     ui->progressBar->setRange(0, curveFx_.count());
-    foreach (const QPointF& point, curveFx_) {
+    for (auto& point : curveFx_) {
         int index = curveFx_.indexOf(point);
         auto item1 = new QTableWidgetItem(DoubleToText(point.x(), 12));
         auto item2 = new QTableWidgetItem(DoubleToText(point.y(), 12));
@@ -356,7 +357,7 @@ void MainWindow::calculateExtremums()
     int index = 0;
     const QVector<QPointF> extremums = misesNE_->getExtremums(initialAngle, finalAngle);
     const QVector<QString> angles = misesNE_->getAngles();
-    foreach (const QPointF &point, extremums) {
+    for (auto& point : extremums) {
         const QString& angle = angles.at(index);
         auto item1 = new QTableWidgetItem(angle);
         auto item2 = new QTableWidgetItem(DoubleToText(point.x(), 12));
@@ -420,8 +421,7 @@ void MainWindow::onTableSelectionChanged()
     std::sort(list.begin(), list.end());
     QString text;
     int currRow = 0;
-    foreach(const QModelIndex& cell, list)
-    {
+    for (auto& cell : list) {
         if (text.length() > 0 && cell.row() != currRow ) {
             text+= "\n";
         }
@@ -457,9 +457,9 @@ void MainWindow::copyToClipboard()
 
 void MainWindow::saveSelection()
 {
-    QStringList lines({QString("%1\t%2\t%3\n").arg("alpha_0")
-                       .arg(ui->extremums->horizontalHeaderItem(1)->text())
-                       .arg(ui->extremums->horizontalHeaderItem(2)->text())});
+    QStringList lines({QString("%1\t%2\t%3\n").arg("alpha_0",
+                       ui->extremums->horizontalHeaderItem(1)->text(),
+                       ui->extremums->horizontalHeaderItem(2)->text())});
     for (int row =0; row < ui->extremums->rowCount(); ++row) {
         QStringList line;
         for (int column = 0; column < ui->extremums->columnCount(); ++column) {
@@ -472,7 +472,6 @@ void MainWindow::saveSelection()
                                                     tr("Save file"),
                                                     lastDir_,
                                                     tr("CSV Table (*.csv)"),
-                                                    nullptr,
                                                     nullptr);
     if (!filename.isEmpty()) {
         int dotIndex = filename.lastIndexOf(".");
@@ -485,7 +484,7 @@ void MainWindow::saveSelection()
         if ( file.open(QIODevice::WriteOnly) )
         {
             QTextStream stream( &file );
-            stream << result << endl;
+            stream << result << Qt::endl;
             file.close();
         }
     }
